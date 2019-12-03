@@ -40,32 +40,124 @@ layer {
     bias_term: true
   }
 }
+#layer {
+#  name: "power1"
+#  type: "Power"
+#  bottom: "conv1"
+#  top: "power1"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power1"
-  type: "Power"
+  name: "power1_scale"
+  type: "Scale"
   bottom: "conv1"
   top: "power1"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus1"
+#  type: "ReLU6"
+#  bottom: "power1"
+#  top: "relus1"
+#}
+layer {
+  name: "relus1_neg"
+  type: "Scale"
+  bottom: "power1"
+  top: "relus1_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus1_minus6"
+  type: "Scale"
+  bottom: "power1"
+  top: "relus1_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus1_threshold"
+  type: "Eltwise"
+  bottom: "relus1_neg"
+  bottom: "relus1_minus6"
+  top: "relus1_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus1"
-  type: "ReLU6"
-  bottom: "power1"
+  type: "Scale"
+  bottom: "relus1_threshold"
   top: "relus1"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power2"
+#  type: "Power"
+#  bottom: "relus1"
+#  top: "power2"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power2"
-  type: "Power"
+  name: "power2_scale"
+  type: "Scale"
   bottom: "relus1"
   top: "power2"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -548,32 +640,124 @@ layer {
     }
   }
 }
+#layer {
+#  name: "power3"
+#  type: "Power"
+#  bottom: "fc2"
+#  top: "power3"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power3"
-  type: "Power"
+  name: "power3_scale"
+  type: "Scale"
   bottom: "fc2"
   top: "power3"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus2"
+#  type: "ReLU6"
+#  bottom: "power3"
+#  top: "relus2"
+#}
+layer {
+  name: "relus2_neg"
+  type: "Scale"
+  bottom: "power3"
+  top: "relus2_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus2_minus6"
+  type: "Scale"
+  bottom: "power3"
+  top: "relus2_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus2_threshold"
+  type: "Eltwise"
+  bottom: "relus2_neg"
+  bottom: "relus2_minus6"
+  top: "relus2_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus2"
-  type: "ReLU6"
-  bottom: "power3"
+  type: "Scale"
+  bottom: "relus2_threshold"
   top: "relus2"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power4"
+#  type: "Power"
+#  bottom: "relus2"
+#  top: "power4"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power4"
-  type: "Power"
+  name: "power4_scale"
+  type: "Scale"
   bottom: "relus2"
   top: "power4"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -766,32 +950,124 @@ layer {
     }
   }
 }
+#layer {
+#  name: "power5"
+#  type: "Power"
+#  bottom: "fc4"
+#  top: "power5"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power5"
-  type: "Power"
+  name: "power5_scale"
+  type: "Scale"
   bottom: "fc4"
   top: "power5"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus3"
+#  type: "ReLU6"
+#  bottom: "power5"
+#  top: "relus3"
+#}
+layer {
+  name: "relus3_neg"
+  type: "Scale"
+  bottom: "power5"
+  top: "relus3_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus3_minus6"
+  type: "Scale"
+  bottom: "power5"
+  top: "relus3_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus3_threshold"
+  type: "Eltwise"
+  bottom: "relus3_neg"
+  bottom: "relus3_minus6"
+  top: "relus3_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus3"
-  type: "ReLU6"
-  bottom: "power5"
+  type: "Scale"
+  bottom: "relus3_threshold"
   top: "relus3"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power6"
+#  type: "Power"
+#  bottom: "relus3"
+#  top: "power6"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power6"
-  type: "Power"
+  name: "power6_scale"
+  type: "Scale"
   bottom: "relus3"
   top: "power6"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -994,32 +1270,124 @@ layer {
     }
   }
 }
+#layer {
+#  name: "power7"
+#  type: "Power"
+#  bottom: "fc6"
+#  top: "power7"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power7"
-  type: "Power"
+  name: "power7_scale"
+  type: "Scale"
   bottom: "fc6"
   top: "power7"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus4"
+#  type: "ReLU6"
+#  bottom: "power7"
+#  top: "relus4"
+#}
+layer {
+  name: "relus4_neg"
+  type: "Scale"
+  bottom: "power7"
+  top: "relus4_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus4_minus6"
+  type: "Scale"
+  bottom: "power7"
+  top: "relus4_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus4_threshold"
+  type: "Eltwise"
+  bottom: "relus4_neg"
+  bottom: "relus4_minus6"
+  top: "relus4_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus4"
-  type: "ReLU6"
-  bottom: "power7"
+  type: "Scale"
+  bottom: "relus4_threshold"
   top: "relus4"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power8"
+#  type: "Power"
+#  bottom: "relus4"
+#  top: "power8"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power8"
-  type: "Power"
+  name: "power8_scale"
+  type: "Scale"
   bottom: "relus4"
   top: "power8"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -1126,32 +1494,124 @@ layer {
     bias_term: true
   }
 }
+#layer {
+#  name: "power9"
+#  type: "Power"
+#  bottom: "conv19"
+#  top: "power9"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power9"
-  type: "Power"
+  name: "power9_scale"
+  type: "Scale"
   bottom: "conv19"
   top: "power9"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus5"
+#  type: "ReLU6"
+#  bottom: "power9"
+#  top: "relus5"
+#}
+layer {
+  name: "relus5_neg"
+  type: "Scale"
+  bottom: "power9"
+  top: "relus5_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus5_minus6"
+  type: "Scale"
+  bottom: "power9"
+  top: "relus5_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus5_threshold"
+  type: "Eltwise"
+  bottom: "relus5_neg"
+  bottom: "relus5_minus6"
+  top: "relus5_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus5"
-  type: "ReLU6"
-  bottom: "power9"
+  type: "Scale"
+  bottom: "relus5_threshold"
   top: "relus5"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power10"
+#  type: "Power"
+#  bottom: "relus5"
+#  top: "power10"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power10"
-  type: "Power"
+  name: "power10_scale"
+  type: "Scale"
   bottom: "relus5"
   top: "power10"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -1200,32 +1660,124 @@ layer {
     bias_term: true
   }
 }
+#layer {
+#  name: "power11"
+#  type: "Power"
+#  bottom: "conv20"
+#  top: "power11"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power11"
-  type: "Power"
+  name: "power11_scale"
+  type: "Scale"
   bottom: "conv20"
   top: "power11"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus6"
+#  type: "ReLU6"
+#  bottom: "power11"
+#  top: "relus6"
+#}
+layer {
+  name: "relus6_neg"
+  type: "Scale"
+  bottom: "power11"
+  top: "relus6_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus6_minus6"
+  type: "Scale"
+  bottom: "power11"
+  top: "relus6_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus6_threshold"
+  type: "Eltwise"
+  bottom: "relus6_neg"
+  bottom: "relus6_minus6"
+  top: "relus6_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus6"
-  type: "ReLU6"
-  bottom: "power11"
+  type: "Scale"
+  bottom: "relus6_threshold"
   top: "relus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power12"
+#  type: "Power"
+#  bottom: "relus6"
+#  top: "power12"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power12"
-  type: "Power"
+  name: "power12_scale"
+  type: "Scale"
   bottom: "relus6"
   top: "power12"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -1310,32 +1862,124 @@ layer {
     bias_term: true
   }
 }
+#layer {
+#  name: "power13"
+#  type: "Power"
+#  bottom: "conv22"
+#  top: "power13"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power13"
-  type: "Power"
+  name: "power13_scale"
+  type: "Scale"
   bottom: "conv22"
   top: "power13"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus7"
+#  type: "ReLU6"
+#  bottom: "power13"
+#  top: "relus7"
+#}
+layer {
+  name: "relus7_neg"
+  type: "Scale"
+  bottom: "power13"
+  top: "relus7_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus7_minus6"
+  type: "Scale"
+  bottom: "power13"
+  top: "relus7_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus7_threshold"
+  type: "Eltwise"
+  bottom: "relus7_neg"
+  bottom: "relus7_minus6"
+  top: "relus7_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus7"
-  type: "ReLU6"
-  bottom: "power13"
+  type: "Scale"
+  bottom: "relus7_threshold"
   top: "relus7"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power14"
+#  type: "Power"
+#  bottom: "relus7"
+#  top: "power14"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power14"
-  type: "Power"
+  name: "power14_scale"
+  type: "Scale"
   bottom: "relus7"
   top: "power14"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -1384,32 +2028,124 @@ layer {
     bias_term: true
   }
 }
+#layer {
+#  name: "power15"
+#  type: "Power"
+#  bottom: "conv23"
+#  top: "power15"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power15"
-  type: "Power"
+  name: "power15_scale"
+  type: "Scale"
   bottom: "conv23"
   top: "power15"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus8"
+#  type: "ReLU6"
+#  bottom: "power15"
+#  top: "relus8"
+#}
+layer {
+  name: "relus8_neg"
+  type: "Scale"
+  bottom: "power15"
+  top: "relus8_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus8_minus6"
+  type: "Scale"
+  bottom: "power15"
+  top: "relus8_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus8_threshold"
+  type: "Eltwise"
+  bottom: "relus8_neg"
+  bottom: "relus8_minus6"
+  top: "relus8_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus8"
-  type: "ReLU6"
-  bottom: "power15"
+  type: "Scale"
+  bottom: "relus8_threshold"
   top: "relus8"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power16"
+#  type: "Power"
+#  bottom: "relus8"
+#  top: "power16"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power16"
-  type: "Power"
+  name: "power16_scale"
+  type: "Scale"
   bottom: "relus8"
   top: "power16"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -1504,32 +2240,124 @@ layer {
     bias_term: true
   }
 }
+#layer {
+#  name: "power17"
+#  type: "Power"
+#  bottom: "conv25"
+#  top: "power17"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power17"
-  type: "Power"
+  name: "power17_scale"
+  type: "Scale"
   bottom: "conv25"
   top: "power17"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus9"
+#  type: "ReLU6"
+#  bottom: "power17"
+#  top: "relus9"
+#}
+layer {
+  name: "relus9_neg"
+  type: "Scale"
+  bottom: "power17"
+  top: "relus9_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus9_minus6"
+  type: "Scale"
+  bottom: "power17"
+  top: "relus9_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus9_threshold"
+  type: "Eltwise"
+  bottom: "relus9_neg"
+  bottom: "relus9_minus6"
+  top: "relus9_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus9"
-  type: "ReLU6"
-  bottom: "power17"
+  type: "Scale"
+  bottom: "relus9_threshold"
   top: "relus9"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power18"
+#  type: "Power"
+#  bottom: "relus9"
+#  top: "power18"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power18"
-  type: "Power"
+  name: "power18_scale"
+  type: "Scale"
   bottom: "relus9"
   top: "power18"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -1578,32 +2406,124 @@ layer {
     bias_term: true
   }
 }
+#layer {
+#  name: "power19"
+#  type: "Power"
+#  bottom: "conv26"
+#  top: "power19"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power19"
-  type: "Power"
+  name: "power19_scale"
+  type: "Scale"
   bottom: "conv26"
   top: "power19"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus10"
+#  type: "ReLU6"
+#  bottom: "power19"
+#  top: "relus10"
+#}
+layer {
+  name: "relus10_neg"
+  type: "Scale"
+  bottom: "power19"
+  top: "relus10_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus10_minus6"
+  type: "Scale"
+  bottom: "power19"
+  top: "relus10_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus10_threshold"
+  type: "Eltwise"
+  bottom: "relus10_neg"
+  bottom: "relus10_minus6"
+  top: "relus10_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus10"
-  type: "ReLU6"
-  bottom: "power19"
+  type: "Scale"
+  bottom: "relus10_threshold"
   top: "relus10"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power20"
+#  type: "Power"
+#  bottom: "relus10"
+#  top: "power20"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power20"
-  type: "Power"
+  name: "power20_scale"
+  type: "Scale"
   bottom: "relus10"
   top: "power20"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -1698,32 +2618,124 @@ layer {
     bias_term: true
   }
 }
+#layer {
+#  name: "power21"
+#  type: "Power"
+#  bottom: "conv28"
+#  top: "power21"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power21"
-  type: "Power"
+  name: "power21_scale"
+  type: "Scale"
   bottom: "conv28"
   top: "power21"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus11"
+#  type: "ReLU6"
+#  bottom: "power21"
+#  top: "relus11"
+#}
+layer {
+  name: "relus11_neg"
+  type: "Scale"
+  bottom: "power21"
+  top: "relus11_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus11_minus6"
+  type: "Scale"
+  bottom: "power21"
+  top: "relus11_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus11_threshold"
+  type: "Eltwise"
+  bottom: "relus11_neg"
+  bottom: "relus11_minus6"
+  top: "relus11_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus11"
-  type: "ReLU6"
-  bottom: "power21"
+  type: "Scale"
+  bottom: "relus11_threshold"
   top: "relus11"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power22"
+#  type: "Power"
+#  bottom: "relus11"
+#  top: "power22"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power22"
-  type: "Power"
+  name: "power22_scale"
+  type: "Scale"
   bottom: "relus11"
   top: "power22"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -1772,32 +2784,124 @@ layer {
     bias_term: true
   }
 }
+#layer {
+#  name: "power23"
+#  type: "Power"
+#  bottom: "conv29"
+#  top: "power23"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power23"
-  type: "Power"
+  name: "power23_scale"
+  type: "Scale"
   bottom: "conv29"
   top: "power23"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus12"
+#  type: "ReLU6"
+#  bottom: "power23"
+#  top: "relus12"
+#}
+layer {
+  name: "relus12_neg"
+  type: "Scale"
+  bottom: "power23"
+  top: "relus12_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus12_minus6"
+  type: "Scale"
+  bottom: "power23"
+  top: "relus12_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus12_threshold"
+  type: "Eltwise"
+  bottom: "relus12_neg"
+  bottom: "relus12_minus6"
+  top: "relus12_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus12"
-  type: "ReLU6"
-  bottom: "power23"
+  type: "Scale"
+  bottom: "relus12_threshold"
   top: "relus12"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power24"
+#  type: "Power"
+#  bottom: "relus12"
+#  top: "power24"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power24"
-  type: "Power"
+  name: "power24_scale"
+  type: "Scale"
   bottom: "relus12"
   top: "power24"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -1892,32 +2996,124 @@ layer {
     bias_term: true
   }
 }
+#layer {
+#  name: "power25"
+#  type: "Power"
+#  bottom: "conv31"
+#  top: "power25"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power25"
-  type: "Power"
+  name: "power25_scale"
+  type: "Scale"
   bottom: "conv31"
   top: "power25"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus13"
+#  type: "ReLU6"
+#  bottom: "power25"
+#  top: "relus13"
+#}
+layer {
+  name: "relus13_neg"
+  type: "Scale"
+  bottom: "power25"
+  top: "relus13_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus13_minus6"
+  type: "Scale"
+  bottom: "power25"
+  top: "relus13_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus13_threshold"
+  type: "Eltwise"
+  bottom: "relus13_neg"
+  bottom: "relus13_minus6"
+  top: "relus13_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus13"
-  type: "ReLU6"
-  bottom: "power25"
+  type: "Scale"
+  bottom: "relus13_threshold"
   top: "relus13"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power26"
+#  type: "Power"
+#  bottom: "relus13"
+#  top: "power26"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power26"
-  type: "Power"
+  name: "power26_scale"
+  type: "Scale"
   bottom: "relus13"
   top: "power26"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -2020,32 +3216,124 @@ layer {
     }
   }
 }
+#layer {
+#  name: "power27"
+#  type: "Power"
+#  bottom: "fc8"
+#  top: "power27"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power27"
-  type: "Power"
+  name: "power27_scale"
+  type: "Scale"
   bottom: "fc8"
   top: "power27"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus14"
+#  type: "ReLU6"
+#  bottom: "power27"
+#  top: "relus14"
+#}
+layer {
+  name: "relus14_neg"
+  type: "Scale"
+  bottom: "power27"
+  top: "relus14_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus14_minus6"
+  type: "Scale"
+  bottom: "power27"
+  top: "relus14_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus14_threshold"
+  type: "Eltwise"
+  bottom: "relus14_neg"
+  bottom: "relus14_minus6"
+  top: "relus14_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus14"
-  type: "ReLU6"
-  bottom: "power27"
+  type: "Scale"
+  bottom: "relus14_threshold"
   top: "relus14"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power28"
+#  type: "Power"
+#  bottom: "relus14"
+#  top: "power28"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power28"
-  type: "Power"
+  name: "power28_scale"
+  type: "Scale"
   bottom: "relus14"
   top: "power28"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -2064,32 +3352,124 @@ layer {
     axis: 0
   }
 }
+#layer {
+#  name: "power29"
+#  type: "Power"
+#  bottom: "scale4"
+#  top: "power29"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power29"
-  type: "Power"
+  name: "power29_scale"
+  type: "Scale"
   bottom: "scale4"
   top: "power29"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus15"
+#  type: "ReLU6"
+#  bottom: "power29"
+#  top: "relus15"
+#}
+layer {
+  name: "relus15_neg"
+  type: "Scale"
+  bottom: "power29"
+  top: "relus15_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus15_minus6"
+  type: "Scale"
+  bottom: "power29"
+  top: "relus15_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus15_threshold"
+  type: "Eltwise"
+  bottom: "relus15_neg"
+  bottom: "relus15_minus6"
+  top: "relus15_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus15"
-  type: "ReLU6"
-  bottom: "power29"
+  type: "Scale"
+  bottom: "relus15_threshold"
   top: "relus15"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power30"
+#  type: "Power"
+#  bottom: "relus15"
+#  top: "power30"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power30"
-  type: "Power"
+  name: "power30_scale"
+  type: "Scale"
   bottom: "relus15"
   top: "power30"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -2174,32 +3554,124 @@ layer {
     bias_term: true
   }
 }
+#layer {
+#  name: "power31"
+#  type: "Power"
+#  bottom: "conv34"
+#  top: "power31"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power31"
-  type: "Power"
+  name: "power31_scale"
+  type: "Scale"
   bottom: "conv34"
   top: "power31"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus16"
+#  type: "ReLU6"
+#  bottom: "power31"
+#  top: "relus16"
+#}
+layer {
+  name: "relus16_neg"
+  type: "Scale"
+  bottom: "power31"
+  top: "relus16_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus16_minus6"
+  type: "Scale"
+  bottom: "power31"
+  top: "relus16_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus16_threshold"
+  type: "Eltwise"
+  bottom: "relus16_neg"
+  bottom: "relus16_minus6"
+  top: "relus16_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus16"
-  type: "ReLU6"
-  bottom: "power31"
+  type: "Scale"
+  bottom: "relus16_threshold"
   top: "relus16"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power32"
+#  type: "Power"
+#  bottom: "relus16"
+#  top: "power32"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power32"
-  type: "Power"
+  name: "power32_scale"
+  type: "Scale"
   bottom: "relus16"
   top: "power32"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -2302,32 +3774,124 @@ layer {
     }
   }
 }
+#layer {
+#  name: "power33"
+#  type: "Power"
+#  bottom: "fc10"
+#  top: "power33"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power33"
-  type: "Power"
+  name: "power33_scale"
+  type: "Scale"
   bottom: "fc10"
   top: "power33"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus17"
+#  type: "ReLU6"
+#  bottom: "power33"
+#  top: "relus17"
+#}
+layer {
+  name: "relus17_neg"
+  type: "Scale"
+  bottom: "power33"
+  top: "relus17_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus17_minus6"
+  type: "Scale"
+  bottom: "power33"
+  top: "relus17_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus17_threshold"
+  type: "Eltwise"
+  bottom: "relus17_neg"
+  bottom: "relus17_minus6"
+  top: "relus17_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus17"
-  type: "ReLU6"
-  bottom: "power33"
+  type: "Scale"
+  bottom: "relus17_threshold"
   top: "relus17"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power34"
+#  type: "Power"
+#  bottom: "relus17"
+#  top: "power34"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power34"
-  type: "Power"
+  name: "power34_scale"
+  type: "Scale"
   bottom: "relus17"
   top: "power34"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -2346,32 +3910,124 @@ layer {
     axis: 0
   }
 }
+#layer {
+#  name: "power35"
+#  type: "Power"
+#  bottom: "scale5"
+#  top: "power35"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power35"
-  type: "Power"
+  name: "power35_scale"
+  type: "Scale"
   bottom: "scale5"
   top: "power35"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus18"
+#  type: "ReLU6"
+#  bottom: "power35"
+#  top: "relus18"
+#}
+layer {
+  name: "relus18_neg"
+  type: "Scale"
+  bottom: "power35"
+  top: "relus18_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus18_minus6"
+  type: "Scale"
+  bottom: "power35"
+  top: "relus18_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus18_threshold"
+  type: "Eltwise"
+  bottom: "relus18_neg"
+  bottom: "relus18_minus6"
+  top: "relus18_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus18"
-  type: "ReLU6"
-  bottom: "power35"
+  type: "Scale"
+  bottom: "relus18_threshold"
   top: "relus18"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power36"
+#  type: "Power"
+#  bottom: "relus18"
+#  top: "power36"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power36"
-  type: "Power"
+  name: "power36_scale"
+  type: "Scale"
   bottom: "relus18"
   top: "power36"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -2466,32 +4122,124 @@ layer {
     bias_term: true
   }
 }
+#layer {
+#  name: "power37"
+#  type: "Power"
+#  bottom: "conv37"
+#  top: "power37"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power37"
-  type: "Power"
+  name: "power37_scale"
+  type: "Scale"
   bottom: "conv37"
   top: "power37"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus19"
+#  type: "ReLU6"
+#  bottom: "power37"
+#  top: "relus19"
+#}
+layer {
+  name: "relus19_neg"
+  type: "Scale"
+  bottom: "power37"
+  top: "relus19_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus19_minus6"
+  type: "Scale"
+  bottom: "power37"
+  top: "relus19_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus19_threshold"
+  type: "Eltwise"
+  bottom: "relus19_neg"
+  bottom: "relus19_minus6"
+  top: "relus19_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus19"
-  type: "ReLU6"
-  bottom: "power37"
+  type: "Scale"
+  bottom: "relus19_threshold"
   top: "relus19"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power38"
+#  type: "Power"
+#  bottom: "relus19"
+#  top: "power38"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power38"
-  type: "Power"
+  name: "power38_scale"
+  type: "Scale"
   bottom: "relus19"
   top: "power38"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -2594,32 +4342,124 @@ layer {
     }
   }
 }
+#layer {
+#  name: "power39"
+#  type: "Power"
+#  bottom: "fc12"
+#  top: "power39"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power39"
-  type: "Power"
+  name: "power39_scale"
+  type: "Scale"
   bottom: "fc12"
   top: "power39"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus20"
+#  type: "ReLU6"
+#  bottom: "power39"
+#  top: "relus20"
+#}
+layer {
+  name: "relus20_neg"
+  type: "Scale"
+  bottom: "power39"
+  top: "relus20_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus20_minus6"
+  type: "Scale"
+  bottom: "power39"
+  top: "relus20_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus20_threshold"
+  type: "Eltwise"
+  bottom: "relus20_neg"
+  bottom: "relus20_minus6"
+  top: "relus20_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus20"
-  type: "ReLU6"
-  bottom: "power39"
+  type: "Scale"
+  bottom: "relus20_threshold"
   top: "relus20"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power40"
+#  type: "Power"
+#  bottom: "relus20"
+#  top: "power40"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power40"
-  type: "Power"
+  name: "power40_scale"
+  type: "Scale"
   bottom: "relus20"
   top: "power40"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -2638,32 +4478,124 @@ layer {
     axis: 0
   }
 }
+#layer {
+#  name: "power41"
+#  type: "Power"
+#  bottom: "scale6"
+#  top: "power41"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power41"
-  type: "Power"
+  name: "power41_scale"
+  type: "Scale"
   bottom: "scale6"
   top: "power41"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus21"
+#  type: "ReLU6"
+#  bottom: "power41"
+#  top: "relus21"
+#}
+layer {
+  name: "relus21_neg"
+  type: "Scale"
+  bottom: "power41"
+  top: "relus21_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus21_minus6"
+  type: "Scale"
+  bottom: "power41"
+  top: "relus21_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus21_threshold"
+  type: "Eltwise"
+  bottom: "relus21_neg"
+  bottom: "relus21_minus6"
+  top: "relus21_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus21"
-  type: "ReLU6"
-  bottom: "power41"
+  type: "Scale"
+  bottom: "relus21_threshold"
   top: "relus21"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power42"
+#  type: "Power"
+#  bottom: "relus21"
+#  top: "power42"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power42"
-  type: "Power"
+  name: "power42_scale"
+  type: "Scale"
   bottom: "relus21"
   top: "power42"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -2748,32 +4680,124 @@ layer {
     bias_term: true
   }
 }
+#layer {
+#  name: "power43"
+#  type: "Power"
+#  bottom: "conv40"
+#  top: "power43"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power43"
-  type: "Power"
+  name: "power43_scale"
+  type: "Scale"
   bottom: "conv40"
   top: "power43"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus22"
+#  type: "ReLU6"
+#  bottom: "power43"
+#  top: "relus22"
+#}
+layer {
+  name: "relus22_neg"
+  type: "Scale"
+  bottom: "power43"
+  top: "relus22_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus22_minus6"
+  type: "Scale"
+  bottom: "power43"
+  top: "relus22_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus22_threshold"
+  type: "Eltwise"
+  bottom: "relus22_neg"
+  bottom: "relus22_minus6"
+  top: "relus22_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus22"
-  type: "ReLU6"
-  bottom: "power43"
+  type: "Scale"
+  bottom: "relus22_threshold"
   top: "relus22"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power44"
+#  type: "Power"
+#  bottom: "relus22"
+#  top: "power44"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power44"
-  type: "Power"
+  name: "power44_scale"
+  type: "Scale"
   bottom: "relus22"
   top: "power44"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -2876,32 +4900,124 @@ layer {
     }
   }
 }
+#layer {
+#  name: "power45"
+#  type: "Power"
+#  bottom: "fc14"
+#  top: "power45"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power45"
-  type: "Power"
+  name: "power45_scale"
+  type: "Scale"
   bottom: "fc14"
   top: "power45"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus23"
+#  type: "ReLU6"
+#  bottom: "power45"
+#  top: "relus23"
+#}
+layer {
+  name: "relus23_neg"
+  type: "Scale"
+  bottom: "power45"
+  top: "relus23_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus23_minus6"
+  type: "Scale"
+  bottom: "power45"
+  top: "relus23_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus23_threshold"
+  type: "Eltwise"
+  bottom: "relus23_neg"
+  bottom: "relus23_minus6"
+  top: "relus23_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus23"
-  type: "ReLU6"
-  bottom: "power45"
+  type: "Scale"
+  bottom: "relus23_threshold"
   top: "relus23"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power46"
+#  type: "Power"
+#  bottom: "relus23"
+#  top: "power46"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power46"
-  type: "Power"
+  name: "power46_scale"
+  type: "Scale"
   bottom: "relus23"
   top: "power46"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -2920,32 +5036,124 @@ layer {
     axis: 0
   }
 }
+#layer {
+#  name: "power47"
+#  type: "Power"
+#  bottom: "scale7"
+#  top: "power47"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power47"
-  type: "Power"
+  name: "power47_scale"
+  type: "Scale"
   bottom: "scale7"
   top: "power47"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus24"
+#  type: "ReLU6"
+#  bottom: "power47"
+#  top: "relus24"
+#}
+layer {
+  name: "relus24_neg"
+  type: "Scale"
+  bottom: "power47"
+  top: "relus24_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus24_minus6"
+  type: "Scale"
+  bottom: "power47"
+  top: "relus24_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus24_threshold"
+  type: "Eltwise"
+  bottom: "relus24_neg"
+  bottom: "relus24_minus6"
+  top: "relus24_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus24"
-  type: "ReLU6"
-  bottom: "power47"
+  type: "Scale"
+  bottom: "relus24_threshold"
   top: "relus24"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power48"
+#  type: "Power"
+#  bottom: "relus24"
+#  top: "power48"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power48"
-  type: "Power"
+  name: "power48_scale"
+  type: "Scale"
   bottom: "relus24"
   top: "power48"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -3030,32 +5238,124 @@ layer {
     bias_term: true
   }
 }
+#layer {
+#  name: "power49"
+#  type: "Power"
+#  bottom: "conv43"
+#  top: "power49"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power49"
-  type: "Power"
+  name: "power49_scale"
+  type: "Scale"
   bottom: "conv43"
   top: "power49"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus25"
+#  type: "ReLU6"
+#  bottom: "power49"
+#  top: "relus25"
+#}
+layer {
+  name: "relus25_neg"
+  type: "Scale"
+  bottom: "power49"
+  top: "relus25_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus25_minus6"
+  type: "Scale"
+  bottom: "power49"
+  top: "relus25_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus25_threshold"
+  type: "Eltwise"
+  bottom: "relus25_neg"
+  bottom: "relus25_minus6"
+  top: "relus25_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus25"
-  type: "ReLU6"
-  bottom: "power49"
+  type: "Scale"
+  bottom: "relus25_threshold"
   top: "relus25"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power50"
+#  type: "Power"
+#  bottom: "relus25"
+#  top: "power50"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power50"
-  type: "Power"
+  name: "power50_scale"
+  type: "Scale"
   bottom: "relus25"
   top: "power50"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -3158,32 +5458,124 @@ layer {
     }
   }
 }
+#layer {
+#  name: "power51"
+#  type: "Power"
+#  bottom: "fc16"
+#  top: "power51"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power51"
-  type: "Power"
+  name: "power51_scale"
+  type: "Scale"
   bottom: "fc16"
   top: "power51"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus26"
+#  type: "ReLU6"
+#  bottom: "power51"
+#  top: "relus26"
+#}
+layer {
+  name: "relus26_neg"
+  type: "Scale"
+  bottom: "power51"
+  top: "relus26_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus26_minus6"
+  type: "Scale"
+  bottom: "power51"
+  top: "relus26_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus26_threshold"
+  type: "Eltwise"
+  bottom: "relus26_neg"
+  bottom: "relus26_minus6"
+  top: "relus26_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus26"
-  type: "ReLU6"
-  bottom: "power51"
+  type: "Scale"
+  bottom: "relus26_threshold"
   top: "relus26"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power52"
+#  type: "Power"
+#  bottom: "relus26"
+#  top: "power52"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power52"
-  type: "Power"
+  name: "power52_scale"
+  type: "Scale"
   bottom: "relus26"
   top: "power52"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -3202,32 +5594,124 @@ layer {
     axis: 0
   }
 }
+#layer {
+#  name: "power53"
+#  type: "Power"
+#  bottom: "scale8"
+#  top: "power53"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power53"
-  type: "Power"
+  name: "power53_scale"
+  type: "Scale"
   bottom: "scale8"
   top: "power53"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus27"
+#  type: "ReLU6"
+#  bottom: "power53"
+#  top: "relus27"
+#}
+layer {
+  name: "relus27_neg"
+  type: "Scale"
+  bottom: "power53"
+  top: "relus27_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus27_minus6"
+  type: "Scale"
+  bottom: "power53"
+  top: "relus27_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus27_threshold"
+  type: "Eltwise"
+  bottom: "relus27_neg"
+  bottom: "relus27_minus6"
+  top: "relus27_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus27"
-  type: "ReLU6"
-  bottom: "power53"
+  type: "Scale"
+  bottom: "relus27_threshold"
   top: "relus27"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power54"
+#  type: "Power"
+#  bottom: "relus27"
+#  top: "power54"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power54"
-  type: "Power"
+  name: "power54_scale"
+  type: "Scale"
   bottom: "relus27"
   top: "power54"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -3322,32 +5806,124 @@ layer {
     bias_term: true
   }
 }
+#layer {
+#  name: "power55"
+#  type: "Power"
+#  bottom: "conv46"
+#  top: "power55"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power55"
-  type: "Power"
+  name: "power55_scale"
+  type: "Scale"
   bottom: "conv46"
   top: "power55"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus28"
+#  type: "ReLU6"
+#  bottom: "power55"
+#  top: "relus28"
+#}
+layer {
+  name: "relus28_neg"
+  type: "Scale"
+  bottom: "power55"
+  top: "relus28_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus28_minus6"
+  type: "Scale"
+  bottom: "power55"
+  top: "relus28_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus28_threshold"
+  type: "Eltwise"
+  bottom: "relus28_neg"
+  bottom: "relus28_minus6"
+  top: "relus28_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus28"
-  type: "ReLU6"
-  bottom: "power55"
+  type: "Scale"
+  bottom: "relus28_threshold"
   top: "relus28"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power56"
+#  type: "Power"
+#  bottom: "relus28"
+#  top: "power56"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power56"
-  type: "Power"
+  name: "power56_scale"
+  type: "Scale"
   bottom: "relus28"
   top: "power56"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
@@ -3392,32 +5968,124 @@ layer {
     }
   }
 }
+#layer {
+#  name: "power57"
+#  type: "Power"
+#  bottom: "fc17"
+#  top: "power57"
+#  power_param {
+#    power: 1.0
+#    scale: 1.0
+#    shift: 3.0
+#  }
+#}
 layer {
-  name: "power57"
-  type: "Power"
+  name: "power57_scale"
+  type: "Scale"
   bottom: "fc17"
   top: "power57"
-  power_param {
-    power: 1.0
-    scale: 1.0
-    shift: 3.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 1.0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 3.0
+    }
+  }
+}
+#layer {
+#  name: "relus29"
+#  type: "ReLU6"
+#  bottom: "power57"
+#  top: "relus29"
+#}
+layer {
+  name: "relus29_neg"
+  type: "Scale"
+  bottom: "power57"
+  top: "relus29_neg"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
+}
+layer {
+  name: "relus29_minus6"
+  type: "Scale"
+  bottom: "power57"
+  top: "relus29_minus6"
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: -6
+    }
+  }
+}
+layer {
+  name: "relus29_threshold"
+  type: "Eltwise"
+  bottom: "relus29_neg"
+  bottom: "relus29_minus6"
+  top: "relus29_threshold"
+  eltwise_param {
+    operation: MAX
   }
 }
 layer {
   name: "relus29"
-  type: "ReLU6"
-  bottom: "power57"
+  type: "Scale"
+  bottom: "relus29_threshold"
   top: "relus29"
+  scale_param {
+    filler {
+      type: "constant"
+      value: -1
+    }
+    axis: 0
+    bias_term: false
+  }
 }
+#layer {
+#  name: "power58"
+#  type: "Power"
+#  bottom: "relus29"
+#  top: "power58"
+#  power_param {
+#    power: 1.0
+#    scale: 0.1666666716337204
+#    shift: 0.0
+#  }
+#}
 layer {
-  name: "power58"
-  type: "Power"
+  name: "power58_scale"
+  type: "Scale"
   bottom: "relus29"
   top: "power58"
-  power_param {
-    power: 1.0
-    scale: 0.1666666716337204
-    shift: 0.0
+  scale_param {
+    filler {
+      type: "constant"
+      value: 0.1666666716337204
+    }
+    axis: 0
+    bias_term: true
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 layer {
